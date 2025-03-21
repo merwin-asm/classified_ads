@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Ad - Classified Ads</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color:#987de3;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        header 
+		{
+		               
+                       text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+font-weight: bold;
+
+            text-align: center;
+            padding: 20px 0;
+            background-color: #6440c7;
+	    color:white;
+        }
+        main {
+            padding: 20px;
+        }
+        .add-form {
+            text-align: center;
+        }
+        input[type="text"], input[type="tel"], input[type="email"], textarea, select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 300px;
+            margin-bottom: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        textarea {
+            height: 100px;
+            resize: none;
+        }
+        button {
+            padding: 10px 20px;
+            border: solid;
+            background-color: #6440c7;
+            color: white;
+            border-radius: 4px;
+	    border-color:white;
+	    border-width:1.5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #987fe6;
+        }
+        .button-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button onclick="location.href='index.html'">Home</button>
+    </div>
+    <header>
+        <h1>Create New Ad</h1>
+    </header>
+    <main>
+        <div class="add-form">
+            <form id="addForm">
+                <input type="text" id="titleInput" placeholder="Title (max 30 characters)" maxlength="30" required>
+                <textarea id="descriptionInput" placeholder="Description (max 250 words)" maxlength="250" required></textarea>
+                <input type="text" id="locationInput" placeholder="Location" required>
+                <input type="tel" id="phoneInput" placeholder="Phone Number" required>
+                <input type="email" id="emailInput" placeholder="Email ID (optional)">
+                <input type="text" id="websiteInput" placeholder="Website (optional)">
+                <select id="typeInput" required>
+                    <option value="" disabled selected>Select Type</option>
+                    <option value="Education Related">Education Related</option>
+                    <option value="For Sale">For Sale</option>
+                    <option value="Looking For Job">Looking For Job</option>
+                    <option value="Providing Job">Providing Job</option>
+                    <option value="Renting">Renting</option>
+                    <option value="Lost">Lost</option>
+                    <option value="Marriage">Marriage</option>
+
+		    <option value="Business">Business</option>
+                                    <option value="Other">Other</option>
+		</select>
+                <button type="submit">Add</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        document.getElementById('addForm').addEventListener('submit', function(event) {
+          event.preventDefault();
+            const title = document.getElementById('titleInput').value;
+            const description = document.getElementById('descriptionInput').value;
+           const location = document.getElementById('locationInput').value;
+           const phone = document.getElementById('phoneInput').value;
+           const email = document.getElementById('emailInput').value;
+            const website = document.getElementById('websiteInput').value;
+            const type = document.getElementById('typeInput').value;
+
+            fetch('http://127.0.0.1:8080/add', {
+                method: 'GET',
+                headers: {             'title': title,
+                    'description': description,
+                    'location': location,
+                    'phonenum': phone,
+                    'email': email,
+                    'website': website,
+                    'entrytype': type
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Ad added successfully');
+                    document.getElementById('addForm').reset();
+                } else {
+                    throw new Error('Failed to add ad');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
+

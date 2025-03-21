@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classified Ads</title>
+    <style>
+        body {
+            /*font-family: Arial, sans-serif;*/
+		    font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif;            background-color: white;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+		font-size: 2em;
+                       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+font-weight: bold;
+
+            text-align: center;
+            padding: 20px 0;
+            background-image: url('bg1.jpg');
+            background-size: cover;
+	    background-position: center; background-repeat: no-repeat; 
+	}
+        main {
+            padding: 20px;
+        }
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+	
+            padding: 10px;
+            border: none;
+           border-bottom: 2px solid #191a18; 
+	   
+            width: 100%;
+            max-width: 300px;
+            margin-right: 10px;
+        }
+        button 
+		{
+
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button.search-button,
+        button.add-button,
+        button.visit-button {
+            background-color: #191a18;
+            color: #fff;
+        }
+        button.search-button:hover,
+        button.add-button:hover,
+        button.visit-button:hover,
+        button.terms-button:hover {
+            background-color: #252625;
+        }
+        .button-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .button-container button {
+            margin-left: 10px;
+        }
+	#entry_type {
+
+		width: 350px;
+		height: 34px;
+		background: #191a18;
+		color:white;
+		font-weight:bold;
+		                font-size: 1em;
+
+	}
+        #searchResults {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .search-result {
+            background-color: white;
+            color: black;
+            padding: 10px;
+            margin: 14px;
+            width: calc(50% - 20px); 
+            border-radius: 4px;
+	    border-style:solid;
+	border-color:black;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+	    border-width:2px;
+        }
+        .search-result h2 {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .search-result p {
+            margin: 10px 0;
+        }
+        .report-button-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        button.report-button {
+            background-color: #ff5050;
+            color: #fff;
+            margin-left: 10px;
+        }
+        button.report-button:hover {
+            background-color: #ff3333;
+	}
+        button.visit-button {
+            background-color: #007bff;
+            color: #fff;
+            margin-top: 10px;
+        }
+        button.visit-button:hover {
+            background-color: #0056b3;
+        }
+
+        
+        @media only screen and (max-width: 600px) {
+            .button-container {
+                position: static;
+                margin-top: 20px;
+            }
+            .button-container button {
+                margin-left: 0;
+                margin-right: 10px;
+            }
+            .search-result {
+                width: calc(100% - 20px);
+            }
+        }
+	.no-results {
+    font-size: 18px;
+    color: #666;
+    text-align: center;
+    margin-top: 20px;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Classified Ads</h1>
+    </header>
+    <main>
+        <div class="button-container">
+            <button class="add-button" onclick="location.href='add.html'">Add</button>
+            
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <button class="search-button" onclick="search()">Search</button>
+        </div>
+        <div id="searchResults"></div>
+    </main>
+    
+    <script>
+	    /*
+        function search() {
+            const searchInput = document.getElementById('searchInput').value;
+            fetch('https://c199f089-7872-404c-bd01-4ca9f25c68f9-00-1segf5tiw7qzc.worf.replit.dev/search', {
+                method: 'GET',
+                headers: {
+                    'query': searchInput
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const searchResultsDiv = document.getElementById('searchResults');
+                searchResultsDiv.innerHTML = '';
+                data.forEach(result => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.classList.add('search-result');
+                    resultDiv.innerHTML = `
+                        <h2>${result.title}</h2>
+                        <p>${result.link}</p>
+                        <div class="report-button-container">
+                            <button class="report-button" onclick="report('${result.id}')">Report</button>
+                        </div>
+                        <button class="visit-button" onclick="window.location.href='${result.website}'">Website</button>
+                    `;
+                    searchResultsDiv.appendChild(resultDiv);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        }*/
+
+/*	    function search() {
+    const searchInput = document.getElementById('searchInput').value;
+    fetch('https://c199f089-7872-404c-bd01-4ca9f25c68f9-00-1segf5tiw7qzc.worf.replit.dev/search', {
+        method: 'GET',
+        headers: {
+            'query': searchInput,
+		'page':1
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const searchResultsDiv = document.getElementById('searchResults');
+        searchResultsDiv.innerHTML = '';
+
+        // Iterate over the object keys and extract nested information
+        for (const id in data) {
+            if (data.hasOwnProperty(id)) {
+                const result = data[id];
+                const resultDiv = document.createElement('div');
+                resultDiv.classList.add('search-result');
+                resultDiv.innerHTML = `
+                    <h2>${result.title}</h2>
+                    <p>${result.description}</p>
+                    <p><strong>Location:</strong> ${result.location}</p>
+                    <p><strong>Phone Number:</strong> ${result.phonenum}</p>
+                    <p><strong>Email:</strong> ${result.email}</p>
+                    <div class="report-button-container">
+                        <button class="report-button" onclick="report('${id}')">Report</button>
+                    </div>
+                    <button class="visit-button" onclick="window.location.href='${result.website}'">Website</button>
+                `;
+                searchResultsDiv.appendChild(resultDiv);
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}*/
+
+function search() {
+    const searchInput = document.getElementById('searchInput').value;
+    fetch('http://127.0.0.1:8080/search', {
+        method: 'GET',
+        headers: {
+            'query': searchInput,
+            'page': 1
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const searchResultsDiv = document.getElementById('searchResults');
+        searchResultsDiv.innerHTML = '';
+
+        // Check if the returned data is an empty object
+        if (Object.keys(data).length === 0) {
+            searchResultsDiv.innerHTML = '<p class="no-results">No Results</p>';
+            return;
+        }
+
+        // Iterate over the object keys and extract nested information
+        for (const id in data) {
+            if (data.hasOwnProperty(id)) {
+                const result = data[id];
+                const resultDiv = document.createElement('div');
+                resultDiv.classList.add('search-result');
+
+                let innerHTML = '';
+				innerHTML += `<div id='entry_type'><p>${result.entry_type}</p></div>`;
+                if (result.title) {
+                    innerHTML += `<h2>${result.title}</h2>`;
+                }
+                if (result.description) {
+                    innerHTML += `<p>${result.description}</p>`;
+                }
+                if (result.location) {
+                    innerHTML += `<p><strong>Location:</strong> ${result.location}</p>`;
+                }
+                if (result.phonenum) {
+                    innerHTML += `<p><strong>Phone Number:</strong> ${result.phonenum}</p>`;
+                }
+                if (result.email) {
+                    innerHTML += `<p><strong>Email:</strong> ${result.email}</p>`;
+                }
+                if (result.website) {
+				    innerHTML += `<a href='https://${result.website}'><button class="visit-button">Website</button></a>`;
+                }
+                if (result.title || result.description || result.location || result.phonenum || result.email) {
+                    innerHTML += `<div class="report-button-container">
+                                      <button class="report-button" onclick="report('${id}')">Report</button>
+                                  </div>`;
+                }
+
+                resultDiv.innerHTML = innerHTML;
+                searchResultsDiv.appendChild(resultDiv);
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+        function report(id) {
+            fetch('http://127.0.0.1:8080/report', {
+                method: 'GET',
+                headers: {
+                    'id': id
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Failed to report');
+                }
+            })
+            .then(data => {
+                if (data === 'reportspam') {
+                    alert('Please do not spam reports!');
+                } else {
+                    alert('Reported successfully');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
+

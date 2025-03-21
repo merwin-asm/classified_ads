@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #login-section, #admin-section {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #controls {
+            margin-bottom: 20px;
+        }
+
+        #controls label, #controls input, #controls button {
+            margin-right: 10px;
+        }
+
+        #items-container .item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        #items-container .item-buttons button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="login-section">
+        <h2>Admin Login</h2>
+        <form id="login-form">
+            <label for="adminname">Admin Name:</label>
+            <input type="text" id="adminname" name="adminname" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Login</button>
+        </form>
+        <div id="login-message"></div>
+    </div>
+
+    <div id="admin-section" style="display:none;">
+        <h2>Admin Panel</h2>
+        <div id="controls">
+            <label for="moderate-toggle">Moderate:</label>
+            <input type="checkbox" id="moderate-toggle" onchange="toggleModerate()">
+            <label for="shutdown-toggle">Shutdown:</label>
+            <input type="checkbox" id="shutdown-toggle" onchange="toggleShutdown()">
+        </div>
+        <div id="items-container"></div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const adminname = document.getElementById('adminname').value;
+            const password = document.getElementById('password').value;
+
+            fetch('http://127.0.0.1:8080/verify', {
+                method: 'POST',
+                headers: {
+                    'adminname': adminname,
+                    'password': password
+                }
+            })
+            .then(response => response.text())
+            .then(text => {
+                if (text === 'success') {
+                    document.getElementById('login-section').style.display = 'none';
+                    document.getElementById('admin-section').style.display = 'block';
+                    fetchItems(adminname, password);
+                } else {
+                    document.getElementById('login-message').innerText = 'Login failed!';
+                }
+            });
+        });
+function fetchItems(adminname, password) {
+    fetch('http://127.0.0.1:8080/results', {
+        headers: {
+            'adminname': adminname,
+            'password': password
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('items-container');
+        container.innerHTML = '';
+        Object.keys(data).forEach(id => {
+            const item = data[id];
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item';
+            itemDiv.innerHTML = `
+                <p>ID: ${id}</p>
+                <p>Title: ${item.title}</p>
+                <p>Description: ${item.description}</p>
+                <p>Location: ${item.location}</p>
+                <p>Phone No.: ${item.phonenum}</p>
+                <p>Email: ${item.email}</p>
+                <p>Website: ${item.website}</p>
+                <p>Type: ${item.entry_type}</p>
+                <p>IP: ${item.ip}</p>
+
+                <div class="item-buttons">
+                    <button onclick="banIP('${item.ip}')">Ban IP</button>
+                    <button onclick="approve('${id}')">Approve</button>
+                    <button onclick="ignore('${id}')">Ignore</button>
+                </div>
+            `;
+            container.appendChild(itemDiv);
+        });
+    });
+}
+/*
+        function fetchItems(adminname, password) {
+            fetch('https://c199f089-7872-404c-bd01-4ca9f25c68f9-00-1segf5tiw7qzc.worf.replit.dev/results', {
+                headers: {
+                    'adminname': adminname,
+                    'password': password
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('items-container');
+                container.innerHTML = '';
+                data.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'item';
+                    itemDiv.innerHTML = `
+                        <p>ID: ${item.id}</p>
+                        <p>Title: ${item.title}</p>
+                        <p>Description: ${item.description}</p>
+                        <p>Location: ${item.location}</p>
+                        <p>Phone No.: ${item.phonenum}</p>
+                        <p>Email: ${item.email}</p>
+			<p>Website: ${item.website}</p>
+                        <p>Type: ${item.entry_type}</p>
+                        <p>IP: ${item.ip}</p>
+
+                        <div class="item-buttons">
+                            <button onclick="banIP('${item.details.ip}')">Ban IP</button>
+                            <button onclick="approve('${item.id}')">Approve</button>
+                            <button onclick="ignore('${item.id}')">Ignore</button>
+                        </div>
+                    `;
+                    container.appendChild(itemDiv);
+                });
+            });
+        }
+
+  */   
+
+        function toggleModerate() {
+            const moderate = document.getElementById('moderate-toggle').checked;
+            const adminname = document.getElementById('adminname').value;
+            const password = document.getElementById('password').value;
+
+            fetch(`http://127.0.0.1:8080/${moderate ? 'moderate_on' : 'moderate_off'}`, {
+                method: 'POST',
+                headers: {
+                    'adminname': adminname,
+                    'password': password
+                }
+            });
+        }
+
+        function toggleShutdown() {
+            const shutdown = document.getElementById('shutdown-toggle').checked;
+            const adminname = document.getElementById('adminname').value;
+            const password = document.getElementById('password').value;
+
+            fetch(`http://127.0.0.1:8080/${shutdown ? 'shutdown_on' : 'shutdown_off'}`, {
+                method: 'POST',
+                headers: {
+                    'adminname': adminname,
+                    'password': password
+                }
+            });
+        }
+
+        
+        function banIP(ip) {
+            const adminname = document.getElementById('adminname').value;
+            const password = document.getElementById('password').value;
+
+            fetch('http://127.0.0.1:8080/banip', {
+                method: 'POST',
+                headers: {
+                    'ip': ip,
+                    'adminname': adminname,
+                    'password': password
+                }
+            });
+        }
+
+        function approve(id) {
+            const adminname = document.getElementById('adminname').value;
+            const password = document.getElementById('password').value;
+
+            fetch('http://127.0.0.1:8080/approve', {
+                method: 'POST',
+                headers: {
+                    'id': id,
+                    'adminname': adminname,
+                    'password': password
+                }
+            });
+        }
+
+        function ignore(id) {
+            const adminname = document.getElementById('adminname').value;
+            const password = document.getElementById('password').value;
+
+            fetch('http://127.0.0.1:8080/ignore', {
+                method: 'POST',
+                headers: {
+                    'id': id,
+                    'adminname': adminname,
+                    'password': password
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
